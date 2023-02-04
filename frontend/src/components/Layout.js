@@ -5,7 +5,9 @@ function Layout() {
   return (
     <main>
       <Header />
-      <Outlet />
+      <div className="post-section">
+        <Outlet />
+      </div>
     </main>
   );
 }

@@ -50,23 +50,25 @@ function EditPost() {
   }
 
   return (
-    <form onSubmit={updatePost}>
-      <input
-        type="title"
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <input
-        type="summary"
-        placeholder="Summary"
-        value={summary}
-        onChange={(e) => setSummary(e.target.value)}
-      />
-      <input type="file" onChange={(e) => setFiles(e.target.files)} />
-      <Editor onChange={setContent} value={content} />
-      <button style={{ marginTop: "5px" }}>Update Post 📭</button>
-    </form>
+    <div className="post-page">
+      <form onSubmit={updatePost}>
+        <input
+          type="title"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <input
+          type="summary"
+          placeholder="Summary"
+          value={summary}
+          onChange={(e) => setSummary(e.target.value)}
+        />
+        <input type="file" onChange={(e) => setFiles(e.target.files)} />
+        <Editor onChange={setContent} value={content} />
+        <button style={{ marginTop: "5px" }}>Update Post 📭</button>
+      </form>
+    </div>
   );
 }
 
