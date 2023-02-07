@@ -1,9 +1,13 @@
 import React, { useRef, useState, useEffect } from "react";
 import "./Canvas.css";
+import { Draggable, Droppable } from 'react-drag-and-drop'
+
 
 
 export default function Canvas() {
   const [isDrawing, setIsDrawing] = useState(false);
+  const [isWriting, setIsWriting] = useState(false);
+  const [xoffset,SetXOffset]=useState(0);
   const [color, setColor] = useState("#3B3B3B");
   const [size, setSize] = useState("3");
   const canvasRef = useRef(null);
@@ -84,20 +88,55 @@ export default function Canvas() {
     setCursor("default");
     setSize("3");
     setColor("#3B3B3B");
+   
   };
 
   const eraseCanvas = () => {
     setCursor("grab");
     setSize("20");
-    setColor("#FFFFFF");
+    setColor("#FFFAFF");
 
     if (!isDrawing) {
       return;
     }
   };
 
+
+  // write text
+const textWrite =({nativeEvent})=>{
+    setIsDrawing(false);
+    setIsWriting(true)
+    const canvas = canvasRef.current;
+    ctx.current = canvas.getContext("2d");
+    console.log("dh")
+    ctx.current.fillStyle = "blue";
+ ctx.current.font = "bold 16px Arial";
+ ctx.current.textAlign = 'center';
+ ctx.current.textBaseline = 'middle';
+ ctx.current.fillText("Zibri", nativeEvent.clientX, nativeEvent.clientY);
+}
+
+// drag
+const draggingOver =(e) =>{
+    e.preventDefault();
+    console.log("Dragging")
+}
+
+const dragStart =(e) =>{
+    console.log("drag"+ e.target.id);
+    e.dataTransfer.setData("text", e.clientX);
+}
+const onDragDropped=(e) =>{
+    let data = e.dataTransfer.getData("text");
+    // let x = e.clientX - data.left; //x position within the element.
+    // var y = e.clientY - data.top; 
+    SetXOffset(data);
+    console.log(data);
+
+}
   return (
     <>
+  
       <div className="canvas-btn">
       <button onClick={getPen} className="btn-width">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
@@ -144,14 +183,32 @@ export default function Canvas() {
   <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/>
 </svg>
            </button>
+           {/* // text button */}
+           <button className="btn-width" onClick={textWrite}> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-fullscreen" viewBox="0 0 16 16">
+  <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/>
+</svg></button>
+
+{/* end */}
       </div>
+      { isWriting ?( <textarea 
+      style={{position:"absolute",left: `${xoffset}px`}} draggable onDragStart={(e) => dragStart(e)}/>) : null}
+     
+    <p>hsjh</p>
+    <div  droppable
+       onDragOver={(e) => draggingOver(e)}
+       onDrop={(e) => onDragDropped(e)}>
       <canvas
+      
        style={{ cursor: cursor }}
         onMouseDown={startPosition}
         onMouseUp={finishedPosition}
         onMouseMove={draw}
         ref={canvasRef}
-      />
+      >
+       
+      </canvas>
+      </div>
+    
     </>
   );
 }
