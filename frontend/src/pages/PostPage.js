@@ -4,7 +4,7 @@ import { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import SkeletonPostPage from "../components/skeletons/SkeletonPostPage";
-import Canvas from "../components/board/Canvas";
+import Board from "../components/board/Board";
 
 function PostPage() {
   const [postInfo, setPostInfo] = useState(null);
@@ -55,7 +55,12 @@ function PostPage() {
           </a>
         </div>
       )}
-      <Canvas></Canvas>
+       <div
+        className="content">
+ <Board/>
+        </div>
+     
+
       <time>Posted on: {formatISO9075(new Date(postInfo.createdAt))}</time>
       <div className="author">Author: {postInfo.author.username}</div>
     </div>

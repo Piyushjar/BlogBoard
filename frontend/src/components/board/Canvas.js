@@ -2,18 +2,21 @@ import React, { useRef, useState, useEffect } from "react";
 import "./Canvas.css";
 import { Draggable, Droppable } from 'react-drag-and-drop'
 
-
+import { Link, useParams } from "react-router-dom";
 
 export default function Canvas() {
   const [isDrawing, setIsDrawing] = useState(false);
   const [isWriting, setIsWriting] = useState(false);
   const [xoffset,SetXOffset]=useState(0);
+  const [yoffset,SetYOffset]=useState(650);
   const [color, setColor] = useState("#3B3B3B");
   const [size, setSize] = useState("3");
   const canvasRef = useRef(null);
   const ctx = useRef(null);
+  const textAreaRef = useRef(null); 
   const timeout = useRef(null);
   const [cursor, setCursor] = useState("default");
+
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -22,6 +25,7 @@ export default function Canvas() {
     //Resizing
     canvas.height = window.innerHeight;
     canvas.width = window.innerWidth;
+
 
     //Load from locastorage
     const canvasimg = localStorage.getItem("canvasimg");
@@ -33,6 +37,9 @@ export default function Canvas() {
         setIsDrawing(false);
       };
       image.src = canvasimg;
+    }
+    if(isWriting){
+      const textArea = textAreaRef.current.focus;
     }
 
   }, [ctx]);
@@ -124,14 +131,15 @@ const draggingOver =(e) =>{
 
 const dragStart =(e) =>{
     console.log("drag"+ e.target.id);
-    e.dataTransfer.setData("text", e.clientX);
+    e.dataTransfer.setData("x-axis", e.clientX);
+    e.dataTransfer.setData("y-axis", e.clientY);
 }
 const onDragDropped=(e) =>{
-    let data = e.dataTransfer.getData("text");
-    // let x = e.clientX - data.left; //x position within the element.
-    // var y = e.clientY - data.top; 
-    SetXOffset(data);
-    console.log(data);
+    let xAxis= e.dataTransfer.getData("x-axis");
+    let yAxis = e.dataTransfer.getData("y-axis");
+    SetXOffset(xAxis);
+    SetYOffset(yAxis);
+    console.log(xAxis+ " "+yAxis);
 
 }
   return (
@@ -178,20 +186,25 @@ const onDragDropped=(e) =>{
 </svg>
           </button>
         </div>
-        <button onClick={eraseCanvas} className="btn-width">
+        
+           {/* // text button */}
+           <button className="btn-width" onClick={textWrite}> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-badge-ar-fill" viewBox="0 0 16 16">
+  <path d="m6.031 8.574-.734-2.426h-.052L4.51 8.574h1.52zm3.642-2.641v1.938h1.033c.66 0 1.068-.316 1.068-.95 0-.64-.422-.988-1.05-.988h-1.05z"/>
+  <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm4.265 5.458h2.004L6.739 11H8L5.996 5.001H4.607L2.595 11h1.2l.47-1.542zM8.5 5v6h1.173V8.763h1.064L11.787 11h1.327L11.91 8.583C12.455 8.373 13 7.779 13 6.9c0-1.147-.773-1.9-2.105-1.9H8.5z"/>
+</svg></button>
+
+{/* end */}
+<Link to={`/board`} target="_blank">
+<button  className="btn-width">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-fullscreen" viewBox="0 0 16 16">
   <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/>
 </svg>
            </button>
-           {/* // text button */}
-           <button className="btn-width" onClick={textWrite}> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-fullscreen" viewBox="0 0 16 16">
-  <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z"/>
-</svg></button>
+          </Link>
 
-{/* end */}
       </div>
       { isWriting ?( <textarea 
-      style={{position:"absolute",left: `${xoffset}px`}} draggable onDragStart={(e) => dragStart(e)}/>) : null}
+      style={{position:"absolute",left: `${xoffset}px`, top : `${yoffset}px`}} draggable onDragStart={(e) => dragStart(e)}/>) : null}
      
     <p>hsjh</p>
     <div  droppable

@@ -8,6 +8,8 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import PostPage from "./pages/PostPage";
 import RegisterPage from "./pages/RegisterPage";
+import Canvas from "./components/board/Canvas";
+import Board from "./components/board/Board";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
             <Route path="/create" element={<CreatePost />} />
             <Route path="/post/:id" element={<PostPage />} />
             <Route path="/edit/:id" element={<EditPost />} />
+            {/* whiteboard */}
+            <Route path="/board" element={<Board />} />
           </Route>
         </Route>
         <Route
