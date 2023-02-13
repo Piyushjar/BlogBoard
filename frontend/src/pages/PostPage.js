@@ -57,7 +57,7 @@ function PostPage() {
       )}
        <div
         className="content">
- <Board/>
+ <Board id={postInfo._id}/>
         </div>
      
 

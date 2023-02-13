@@ -4,7 +4,7 @@ import { Draggable, Droppable } from 'react-drag-and-drop'
 
 import { Link, useParams } from "react-router-dom";
 
-export default function Canvas() {
+export default function Canvas({id}) {
   const [isDrawing, setIsDrawing] = useState(false);
   const [isWriting, setIsWriting] = useState(false);
   const [xoffset,SetXOffset]=useState(0);
@@ -16,7 +16,8 @@ export default function Canvas() {
   const textAreaRef = useRef(null); 
   const timeout = useRef(null);
   const [cursor, setCursor] = useState("default");
-
+  const [text, setText] = useState("gjhgh")
+ const _id = id;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -28,7 +29,7 @@ export default function Canvas() {
 
 
     //Load from locastorage
-    const canvasimg = localStorage.getItem("canvasimg");
+    const canvasimg = localStorage.getItem("canvasimg-"+id);
     if (canvasimg) {
       var image = new Image();
       ctx.current = canvas.getContext("2d");
@@ -72,22 +73,24 @@ export default function Canvas() {
     if (timeout.current !== undefined) clearTimeout(timeout.current);
     timeout.current = setTimeout(function () {
       var base64ImageData = canvas.toDataURL("image/png");
-      localStorage.setItem("canvasimg", base64ImageData);
+      localStorage.setItem("canvasimg-"+id, base64ImageData);
     }, 400);
   };
 
   const clearCanvas = () => {
-    localStorage.removeItem("canvasimg");
+    localStorage.removeItem("canvasimg-"+id);
     const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
-    context.fillStyle = "white";
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    const context = canvas.getContext("2d"); 
+     context.fillStyle = "white";
+     context.fillRect(0, 0, canvas.width, canvas.height);
+ 
+   
 
     //Passing clear screen
     if (timeout.current !== undefined) clearTimeout(timeout.current);
     timeout.current = setTimeout(function () {
       var base64ImageData = canvas.toDataURL("image/png");
-      localStorage.setItem("canvasimg", base64ImageData);
+      localStorage.setItem("canvasimg-"+id, base64ImageData);
     }, 400);
   };
 
@@ -110,23 +113,30 @@ export default function Canvas() {
 
 
   // write text
-const textWrite =({nativeEvent})=>{
+const startWrite =()=>{
     setIsDrawing(false);
     setIsWriting(true)
+  
+  }
+  const finishWrite =({nativeEvent})=>{
+   
+  
     const canvas = canvasRef.current;
     ctx.current = canvas.getContext("2d");
-    console.log("dh")
+    
     ctx.current.fillStyle = "blue";
- ctx.current.font = "bold 16px Arial";
- ctx.current.textAlign = 'center';
- ctx.current.textBaseline = 'middle';
- ctx.current.fillText("Zibri", nativeEvent.clientX, nativeEvent.clientY);
-}
+    ctx.current.font = "bold 16px Arial";
+    ctx.current.textAlign = 'center';
+    ctx.current.textBaseline = 'middle';
+    ctx.current.fillText(text, nativeEvent.clientX, nativeEvent.clientY);
+    console.log(text+"  fin");
+    setIsWriting(false)
+  }
 
 // drag
 const draggingOver =(e) =>{
     e.preventDefault();
-    console.log("Dragging")
+    console.log("Dragging"+text)
 }
 
 const dragStart =(e) =>{
@@ -196,7 +206,8 @@ link.setAttribute('href', image)
         </div>
         
            {/* // text button */}
-           <button className="btn-width" onClick={textWrite}> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-badge-ar-fill" viewBox="0 0 16 16">
+    <button className="btn-width" onClick={startWrite}> 
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-badge-ar-fill" viewBox="0 0 16 16">
   <path d="m6.031 8.574-.734-2.426h-.052L4.51 8.574h1.52zm3.642-2.641v1.938h1.033c.66 0 1.068-.316 1.068-.95 0-.64-.422-.988-1.05-.988h-1.05z"/>
   <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm4.265 5.458h2.004L6.739 11H8L5.996 5.001H4.607L2.595 11h1.2l.47-1.542zM8.5 5v6h1.173V8.763h1.064L11.787 11h1.327L11.91 8.583C12.455 8.373 13 7.779 13 6.9c0-1.147-.773-1.9-2.105-1.9H8.5z"/>
 </svg></button>
@@ -218,15 +229,20 @@ link.setAttribute('href', image)
 </svg>
            </button></a>
       </div>
-      { isWriting ?( <textarea 
-      style={{position:"absolute",left: `${xoffset}px`, top : `${yoffset}px`}} draggable onDragStart={(e) => dragStart(e)}/>) : null}
+      { isWriting ?( 
+      <textarea 
+      style={{ backgroundColor:"transparent",position:"absolute",left: `${xoffset}px`, top : `${yoffset}px`}} 
+      draggable 
+      onChange={(e) => setText(e.target.value)}
+      onBlur={finishWrite}
+      onDragStart={(e) => dragStart(e)}/>) : null}
 
-   
+
       <canvas
         droppable
         onDragOver={(e) => draggingOver(e)}
         onDrop={(e) => onDragDropped(e)}
-       style={{ cursor: cursor }}
+        style={{ cursor: cursor }}
         onMouseDown={startPosition}
         onMouseUp={finishedPosition}
         onMouseMove={draw}
