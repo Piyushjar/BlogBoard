@@ -5,6 +5,8 @@ import { Link, useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import SkeletonPostPage from "../components/skeletons/SkeletonPostPage";
 import Board from "../components/board/Board";
+ import ModalBox from "../components/board/ModalBox";
+
 
 function PostPage() {
   const [postInfo, setPostInfo] = useState(null);
@@ -55,9 +57,10 @@ function PostPage() {
           </a>
         </div>
       )}
-       <div
-        className="content">
- <Board id={postInfo._id}/>
+       <div>
+ {/* <Board _id={postInfo._id}/> */}
+ <ModalBox/>
+
         </div>
      
 

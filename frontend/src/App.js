@@ -24,7 +24,7 @@ function App() {
             <Route path="/post/:id" element={<PostPage />} />
             <Route path="/edit/:id" element={<EditPost />} />
             {/* whiteboard */}
-            <Route path="/board" element={<Board />} />
+            <Route path="/board/:id" element={<Canvas/>} />
           </Route>
         </Route>
         <Route

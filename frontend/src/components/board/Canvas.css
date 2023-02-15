@@ -30,3 +30,7 @@
 .mouse-state {
     cursor: none;
 }
+canvas {
+    background-color: white;
+    /* width: 100%; */
+}
