@@ -252,7 +252,7 @@ function Canvas({_id}) {
         onBlur={finishWrite}
         onDragStart={(e) => dragStart(e)}/>) : null}
   
-  <h2>{id}</h2>
+
         <canvas
           droppable
           onDragOver={(e) => draggingOver(e)}

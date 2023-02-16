@@ -146,7 +146,9 @@ form.register h1 {
   text-align: center;
 }
 div.post-page {
-  max-width: 700px;
+  max-width: 816px;
+  background-color: white;
+  padding: 34px;
 }
 
 div.post-page div.image {
