@@ -8,7 +8,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import PostPage from "./pages/PostPage";
 import RegisterPage from "./pages/RegisterPage";
-import Canvas from "./components/board/Canvas";
+
 import Board from "./components/board/Board";
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
             <Route path="/post/:id" element={<PostPage />} />
             <Route path="/edit/:id" element={<EditPost />} />
             {/* whiteboard */}
-            <Route path="/board/:id" element={<Canvas/>} />
+            <Route path="/board/:id" element={<Board/>} />
           </Route>
         </Route>
         <Route

@@ -34,3 +34,6 @@ canvas {
     background-color: white;
     /* width: 100%; */
 }
+body{
+   overflow-x: hidden;
+}

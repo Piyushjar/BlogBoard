@@ -58,8 +58,8 @@ function PostPage() {
         </div>
       )}
        <div>
- {/* <Board _id={postInfo._id}/> */}
- <ModalBox/>
+
+ <ModalBox _id={postInfo._id}/>
 
         </div>
      

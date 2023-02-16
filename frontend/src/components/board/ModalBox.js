@@ -21,15 +21,13 @@ function Canvas({_id}) {
     const timeout = useRef(null);
     const [cursor, setCursor] = useState("default");
     const [text, setText] = useState("gjhgh")
-    const id2 = useParams();
-   let id =_id; 
-  //  if(Object.keys(id).length === 0 ){
-  //   id=id2;
-  //  }
+ 
+  const id =_id; 
+ 
   
   
    const onFullScreen = (e)=>{
-    id=id2;
+    
     e.stopPropagation();
   
   
@@ -259,12 +257,12 @@ function Canvas({_id}) {
           droppable
           onDragOver={(e) => draggingOver(e)}
           onDrop={(e) => onDragDropped(e)}
-          style={{ cursor: cursor }}
+          style={{ cursor: cursor,zIndex:1 }}
           onMouseDown={startPosition}
           onMouseUp={finishedPosition}
           onMouseMove={draw}
           ref={canvasRef}
-  
+
         >
          
         </canvas>
@@ -274,7 +272,8 @@ function Canvas({_id}) {
     );
   }
 
-export default function ModalBox() {
+export default function ModalBox({_id}) {
+  const id = _id
 
     const [disabled, setDisabled] = useState(false);
  
@@ -300,14 +299,12 @@ export default function ModalBox() {
                 <Draggable disabled={disabled} >
                     <div className="modal-content"  >
                         <div className="modal-header"  onClick={(e) =>{setDisabled(false)}}>
-                            <button type="button" className="close" >
-                                <span aria-hidden="true">&times;</span>
-                                <span className="sr-only">Close</span>
-                            </button>
-
+                        <Modal.Header closeButton>
+                        <Modal.Title className='w-100'>Drag To Move</Modal.Title>
+                          </Modal.Header>
                         </div>
                         <div className="modal-body"  onClick={(e) =>{setDisabled(true)}}>
-                            <Canvas />
+                        <Canvas _id={id}/>
                         </div>
                     </div></Draggable>
             </Modal>
