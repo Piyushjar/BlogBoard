@@ -1,11 +1,8 @@
 import { useContext, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
-
-
-
 
 function LoginPage() {
   const [username, setUsername] = useState("");
@@ -26,12 +23,10 @@ function LoginPage() {
         setUserInfo(userInfo);
         setRedirect(true);
       });
-    }
-    if (response.ok) {
       localStorage.setItem("isAuthenticated", "true");
       toast.success("Logged in Successfully!");
     } else {
-      toast.error("Wrong credentials!");
+      toast.warn("Wrong credentials!");
     }
   }
 
@@ -41,7 +36,6 @@ function LoginPage() {
 
   return (
     <>
-      <ToastContainer pauseOnFocusLoss={false} draggablePercent={60} />
       <form className="login" onSubmit={login}>
         <h1>Login</h1>
         <input
@@ -57,6 +51,9 @@ function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button>Login 🔑</button>
+        <p style={{ textAlign: "center" }}>
+          don't have an account ? <Link to="/register">sign up</Link>
+        </p>
       </form>
     </>
   );

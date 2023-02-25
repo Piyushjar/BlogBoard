@@ -16,7 +16,14 @@ function Editor({ value, onChange }) {
       ["clean"],
     ],
   };
-  return <ReactQuill value={value} modules={modules} onChange={onChange} />;
+  return (
+    <ReactQuill
+      style={{ border: "2px solid rgb(190, 164, 231)" }}
+      value={value}
+      modules={modules}
+      onChange={onChange}
+    />
+  );
 }
 
 export default Editor;

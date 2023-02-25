@@ -2,16 +2,14 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "./modal.css";
 import React, { useRef, useState, useEffect } from "react";
-import "./Canvas.css";
 import { Link, useParams, NavLink } from "react-router-dom";
-// import Canvas from './Canvas';
 import Draggable from "react-draggable";
 
 function Canvas({ _id }) {
   const [isDrawing, setIsDrawing] = useState(false);
   const [isWriting, setIsWriting] = useState(false);
   const [xoffset, SetXOffset] = useState(0);
-  const [yoffset, SetYOffset] = useState(650);
+  const [yoffset, SetYOffset] = useState(200);
   const [color, setColor] = useState("#3B3B3B");
   const [size, setSize] = useState("3");
   const canvasRef = useRef(null);

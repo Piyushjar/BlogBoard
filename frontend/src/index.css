@@ -9,7 +9,7 @@ body {
       to bottom,
       rgba(255, 153, 153, 0) 0%,
       rgba(255, 153, 153, 0) 85%,
-      rgba(255, 153, 153, 1) 100%
+      rgb(197, 190, 252) 100%
     ),
     /* url("https://images.unsplash.com/photo-1432821596592-e2c18b78144f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YmxvZyUyMGJhY2tncm91bmR8ZW58MHx8MHx8&w=1000&q=80"); */
       url("https://images.unsplash.com/photo-1528731708534-816fe59f90cb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80");
@@ -59,7 +59,7 @@ header nav {
 }
 
 div.post {
-  max-width: 700px;
+  width: 350px;
   align-content: center;
   display: grid;
   gap: 20px;
@@ -74,12 +74,6 @@ div.post-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-@media screen and (min-width: 650px) {
-  div.post {
-    grid-template-columns: 0.9fr 1.1fr;
-  }
 }
 
 div.post div.texts h2 {
@@ -119,7 +113,7 @@ div.post p.summary {
 /* login form */
 form.login,
 form.register {
-  width: 500px;
+  width: 350px;
   margin: 0 auto;
 }
 
@@ -149,7 +143,7 @@ form.register h1 {
   text-align: center;
 }
 div.post-page {
-  max-width: 816px;
+  width: 440px;
   background-color: white;
   padding: 34px;
 }
@@ -207,6 +201,20 @@ div.post-page a.delete-btn {
   border-radius: 0.5rem;
   cursor: pointer;
   background-color: rgb(223, 33, 49);
+}
+
+@media screen and (min-width: 650px) {
+  div.post {
+    grid-template-columns: 0.9fr 1.1fr;
+    width: 700px;
+  }
+  div.post-page {
+    width: 700px;
+  }
+  form.login,
+  form.register {
+    width: 500px;
+  }
 }
 
 /* toast notifications */

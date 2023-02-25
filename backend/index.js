@@ -3,6 +3,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const User = require("./models/User");
 const Post = require("./models/Post");
+const cloudinary = require("./utils/cloudinary");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
@@ -69,12 +70,23 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/post", uploadMiddleware.single("file"), async (req, res) => {
-  const { originalname, path } = req.file;
-  const parts = originalname.split(".");
-  const extension = parts[parts.length - 1];
-  const newPath = path + "." + extension;
-  fs.renameSync(path, newPath);
-
+  console.log(req.file);
+  // Upload the file to Cloudinary
+  const image = await cloudinary.uploader.upload(
+    req.file.path,
+    { folder: "covers" },
+    (error, result) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send("Upload failed");
+      }
+    }
+  );
+  // const { originalname, path } = req.file;
+  // const parts = originalname.split(".");
+  // const extension = parts[parts.length - 1];
+  // const newPath = path + "." + extension;
+  // fs.renameSync(path, newPath);
   const { token } = req.cookies;
   jwt.verify(token, secret, {}, async (error, info) => {
     if (error) throw error;
@@ -83,7 +95,7 @@ app.post("/post", uploadMiddleware.single("file"), async (req, res) => {
       title,
       summary,
       content,
-      cover: newPath,
+      cover: image.secure_url,
       author: info.id,
     });
     res.json(postDoc);
