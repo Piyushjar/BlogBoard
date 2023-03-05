@@ -126,8 +126,6 @@ const startWrite =()=>{
   
   }
   const finishWrite =({nativeEvent})=>{
-   
-  
     const canvas = canvasRef.current;
     ctx.current = canvas.getContext("2d");
     
@@ -135,6 +133,7 @@ const startWrite =()=>{
     ctx.current.font = "bold 16px Arial";
     ctx.current.textAlign = 'center';
     ctx.current.textBaseline = 'middle';
+    text = "nkhdhshd"
     ctx.current.fillText(text, nativeEvent.clientX, nativeEvent.clientY);
     console.log(text+"  fin");
     setIsWriting(false)
@@ -237,14 +236,17 @@ link.setAttribute('href', image)
            </button></a>
       </div>
       { isWriting ?( 
+        <>
       <textarea 
       style={{ backgroundColor:"transparent",position:"absolute",left: `${xoffset}px`, top : `${yoffset}px`}} 
       draggable 
       onChange={(e) => setText(e.target.value)}
       onBlur={finishWrite}
-      onDragStart={(e) => dragStart(e)}/>) : null}
+      onDragStart={(e) => dragStart(e)}/>
+      </>
+      ) : null}
 
-<h2>{id}</h2>
+
       <canvas
         droppable
         onDragOver={(e) => draggingOver(e)}

@@ -3,8 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Navigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
-
-
+import './LoginPage.css'
 
 
 function LoginPage() {
@@ -41,6 +40,7 @@ function LoginPage() {
 
   return (
     <>
+    <div className="login-screen"></div>
       <ToastContainer pauseOnFocusLoss={false} draggablePercent={60} />
       <form className="login" onSubmit={login}>
         <h1>Login</h1>
@@ -56,8 +56,9 @@ function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button>Login 🔑</button>
+        <button>Login </button>
       </form>
+    
     </>
   );
 }

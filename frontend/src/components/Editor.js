@@ -16,7 +16,7 @@ function Editor({ value, onChange }) {
       ["clean"],
     ],
   };
-  return <ReactQuill value={value} modules={modules} onChange={onChange} />;
+  return <ReactQuill value={value} modules={modules} onChange={onChange}  style={{backgroundColor:"white", minHeight:400}}/>;
 }
 
 export default Editor;

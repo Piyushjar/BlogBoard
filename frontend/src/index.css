@@ -64,6 +64,7 @@ div.post {
   grid-template-columns: 1fr;
   border-bottom: 1px solid rgb(151, 208, 247);
   padding: 0.4rem;
+
 }
 
 div.post-section {
@@ -71,6 +72,7 @@ div.post-section {
   display: flex;
   flex-direction: column;
   align-items: center;
+  
 }
 
 @media screen and (min-width: 650px) {
