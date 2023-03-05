@@ -36,7 +36,6 @@ function LoginPage() {
 
   return (
     <>
-      <ToastContainer pauseOnFocusLoss={false} draggablePercent={60} />
       <form className="login" onSubmit={login}>
         <h1>Login</h1>
         <input
@@ -52,8 +51,10 @@ function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button>Login 🔑</button>
+        <p style={{ textAlign: "center" }}>
+          don't have an account ? <Link to="/register">sign up</Link>
+        </p>
       </form>
-    
     </>
   );
 }
