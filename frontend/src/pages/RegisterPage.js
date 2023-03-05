@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { Link, Navigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function RegisterPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [redirect, setRedirect] = useState(false);
 
   async function register(e) {
     e.preventDefault();
@@ -12,10 +15,15 @@ function RegisterPage() {
       headers: { "Content-Type": "application/json" },
     });
     if (response.status === 200) {
-      alert("Successully Registered.");
+      toast.success("Successully Registered.");
+      setRedirect(true);
     } else {
-      alert("Registration failed.");
+      toast.error("Registration failed.");
     }
+  }
+
+  if (redirect) {
+    return <Navigate to={"/login"} />;
   }
 
   return (
@@ -34,6 +42,12 @@ function RegisterPage() {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button>Register 📓</button>
+      <p style={{ textAlign: "center" }}>
+        already have an account ?{" "}
+        <Link to="/login" className="logo">
+          sign in
+        </Link>
+      </p>
     </form>
   );
 }

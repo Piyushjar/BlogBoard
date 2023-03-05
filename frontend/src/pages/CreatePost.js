@@ -12,6 +12,7 @@ function CreatePost() {
 
   async function createNewPost(e) {
     e.preventDefault();
+    toast.loading("Posting...🚀");
     const data = new FormData();
     data.set("title", title);
     data.set("summary", summary);
@@ -22,9 +23,10 @@ function CreatePost() {
       body: data,
       credentials: "include",
     });
+    toast.dismiss();
     if (response.ok) {
-      toast.success("Post Created");
       setRedirect(true);
+      toast.success("Post Created");
     } else {
       toast.error("Some error occured!");
     }

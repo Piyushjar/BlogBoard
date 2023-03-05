@@ -1,16 +1,15 @@
 import { formatISO9075 } from "date-fns";
 import { toast } from "react-toastify";
 import { useState, useEffect, useContext } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import SkeletonPostPage from "../components/skeletons/SkeletonPostPage";
-import Board from "../components/board/Board";
- import ModalBox from "../components/board/ModalBox";
-
+import ModalBox from "../components/board/ModalBox";
 
 function PostPage() {
   const [postInfo, setPostInfo] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [redirect, setRedirect] = useState(false);
   const { userInfo } = useContext(UserContext);
   const { id } = useParams();
   useEffect(() => {
@@ -26,21 +25,25 @@ function PostPage() {
   if (loading || !postInfo) return <SkeletonPostPage />;
 
   async function deletePost() {
+    toast.loading("Deleting post...");
     const response = await fetch(`http://localhost:4000/post/${id}`, {
       method: "DELETE",
     });
+    toast.dismiss();
     if (response.status == 200) {
+      setRedirect(true);
       toast.success("Post Deleted");
-      console.log("deleted sucessfully");
     } else {
       toast.warn("Something went wrong");
     }
   }
 
+  if (redirect) return <Navigate to={"/"} />;
+
   return (
     <div className="post-page">
       <div className="image">
-        <img src={`http://localhost:4000/${postInfo.cover}`} alt="cover" />
+        <img src={postInfo.cover} alt="cover" />
       </div>
       <h1>{postInfo.title}</h1>
       <div
@@ -57,12 +60,9 @@ function PostPage() {
           </a>
         </div>
       )}
-       <div>
-
- <ModalBox _id={postInfo._id}/>
-
-        </div>
-     
+      <div>
+        <ModalBox _id={postInfo._id} />
+      </div>
 
       <time>Posted on: {formatISO9075(new Date(postInfo.createdAt))}</time>
       <div className="author">Author: {postInfo.author.username}</div>
