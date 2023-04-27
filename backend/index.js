@@ -27,7 +27,7 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: process.env.CORS_URL,
+    origin: "https://blogboard.vercel.app",
   })
 );
 app.use(express.json());
