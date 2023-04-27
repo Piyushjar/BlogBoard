@@ -12,7 +12,7 @@ function EditPost() {
   const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}post/${id}`).then((response) => {
+    fetch(`${process.env.REACT_APP_API_URL}/post/${id}`).then((response) => {
       response.json().then((postInfo) => {
         setTitle(postInfo.title);
         setSummary(postInfo.summary);
