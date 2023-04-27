@@ -23,7 +23,7 @@ function EditPost() {
 
   async function updatePost(e) {
     e.preventDefault();
-    toast.loading("Updating...🚀");
+    // toast.loading("Updating...🚀");
     const data = new FormData();
     data.set("title", title);
     data.set("summary", summary);
@@ -38,7 +38,7 @@ function EditPost() {
       credentials: "include",
     });
 
-    toast.dismiss();
+    // toast.dismiss();
     if (response.ok) {
       setRedirect(true);
       toast.success("Post updated successfully");
