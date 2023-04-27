@@ -7,7 +7,7 @@ function Post({ title, summary, cover, content, author, _id, createdAt }) {
       <div className="image">
         <Link to={`/post/${_id}`}>
           <img
-            src={cover}
+            src={`${cover.url}`}
             alt="we couldn't get the cover, here's an ice-cream 🍨"
           />
         </Link>

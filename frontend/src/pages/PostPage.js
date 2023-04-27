@@ -14,7 +14,7 @@ function PostPage() {
   const { id } = useParams();
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:4000/post/${id}`).then((response) => {
+    fetch(`${process.env.REACT_APP_API_URL}/post/${id}`).then((response) => {
       response.json().then((postInfo) => {
         setPostInfo(postInfo);
         setLoading(false);
@@ -26,9 +26,12 @@ function PostPage() {
 
   async function deletePost() {
     toast.loading("Deleting post...");
-    const response = await fetch(`http://localhost:4000/post/${id}`, {
-      method: "DELETE",
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/post/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
     toast.dismiss();
     if (response.status == 200) {
       setRedirect(true);
@@ -43,7 +46,7 @@ function PostPage() {
   return (
     <div className="post-page">
       <div className="image">
-        <img src={postInfo.cover} alt="cover" />
+        <img src={`${postInfo.cover.url}`} alt="cover" />
       </div>
       <h1>{postInfo.title}</h1>
       <div

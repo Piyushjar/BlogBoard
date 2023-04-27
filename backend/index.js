@@ -3,28 +3,54 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const User = require("./models/User");
 const Post = require("./models/Post");
-const cloudinary = require("./utils/cloudinary");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const fs = require("fs");
 const multer = require("multer");
-const PostModel = require("./models/Post");
-const uploadMiddleware = multer({ dest: "uploads/" });
+const cloudinary = require("cloudinary").v2;
+const dotenv = require("dotenv");
+dotenv.config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
+
+const storage = new multer.memoryStorage();
+const upload = multer({
+  storage,
+});
+
 const app = express();
 
-const salt = bcrypt.genSaltSync(10);
-const secret = "ifeagiafiaeubipegipahfeaohofhdkjbzhiefhbalirgbrbhaif";
-
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:3000",
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
-// app.use("/uploads", express.static(__dirname + "/uploads"));
 
-mongoose.connect(
-  // "mongodb+srv://Piyush:blogger02@cluster0.tag5odk.mongodb.net/testbiiVQ88aLjLtQQQJ"
-  "mongodb+srv://team:b2I5co7htaRSTLwK@cluster0.nh9ed9w.mongodb.net/test"
-);
+const salt = bcrypt.genSaltSync(10);
+const secret = process.env.JWT_SECRET;
+
+mongoose.connect(process.env.DB_URL);
+
+async function handleUpload(file) {
+  const res = await cloudinary.uploader.upload(file, {
+    folder: "covers",
+    resource_type: "auto",
+  });
+  return res;
+}
+
+async function handleDelete(id) {
+  await cloudinary.uploader.destroy(id, function (error, result) {
+    console.log(result, error);
+  });
+}
 
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
@@ -59,48 +85,44 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/profile", (req, res) => {
-  const { token } = req.cookies;
-  jwt.verify(token, secret, {}, (error, info) => {
-    if (error) throw error;
-    res.json(info);
-  });
+  try {
+    const { token } = req.cookies;
+    jwt.verify(token, secret, {}, (error, info) => {
+      if (error) throw error;
+      res.json(info);
+    });
+  } catch (error) {
+    res.send({ message: error.message });
+  }
 });
 
 app.post("/logout", (req, res) => {
   res.cookie("token", "").json("Logged out successfully.");
 });
 
-app.post("/post", uploadMiddleware.single("file"), async (req, res) => {
-  // Upload the file to Cloudinary
-  const image = await cloudinary.uploader.upload(
-    req.file.path,
-    { folder: "covers" },
-    (error, result) => {
-      if (error) {
-        console.error(error);
-        res.status(500).send("Upload failed");
-      }
-    }
-  );
-  // const { originalname, path } = req.file;
-  // const parts = originalname.split(".");
-  // const extension = parts[parts.length - 1];
-  // const newPath = path + "." + extension;
-  // fs.renameSync(path, newPath);
-  const { token } = req.cookies;
-  jwt.verify(token, secret, {}, async (error, info) => {
-    if (error) res.status(400).json("Wrong credentials.");
-    const { title, summary, content } = req.body;
-    const postDoc = await Post.create({
-      title,
-      summary,
-      content,
-      cover: image.secure_url,
-      cover_id: image.public_id,
-      author: info.id,
+app.post("/post", upload.single("file"), async (req, res) => {
+  try {
+    const { token } = req.cookies;
+    jwt.verify(token, secret, {}, async (error, info) => {
+      if (error) throw error;
+      const b64 = Buffer.from(req.file.buffer).toString("base64");
+      let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+      const cldRes = await handleUpload(dataURI);
+      const { title, summary, content } = req.body;
+      const postDoc = await Post.create({
+        title,
+        summary,
+        content,
+        cover: { url: cldRes.secure_url, id: cldRes.public_id },
+        author: info.id,
+      });
+      res.json(postDoc);
     });
-    res.json(postDoc);
-  });
+  } catch (error) {
+    res.send({
+      message: error.message,
+    });
+  }
 });
 
 app.get("/post", async (req, res) => {
@@ -117,77 +139,63 @@ app.get("/post/:id", async (req, res) => {
   res.json(postDoc);
 });
 
-app.put("/post", uploadMiddleware.single("file"), async (req, res) => {
-  // let newPath = null;
-  // if (req.file) {
-  //   const { originalname, path } = req.file;
-  //   const parts = originalname.split(".");
-  //   const extension = parts[parts.length - 1];
-  //   newPath = path + "." + extension;
-  //   fs.renameSync(path, newPath);
-  // }
-  const { token } = req.cookies;
-  jwt.verify(token, secret, {}, async (error, info) => {
-    if (error) return res.status(400).json("Wrong credentials");
-    const { id, title, summary, content } = req.body;
-    const postDoc = await Post.findById(id);
-    const isAuthor = JSON.stringify(postDoc.author) === JSON.stringify(info.id);
-    if (!isAuthor) {
-      return res.status(400).json("You are not the author.");
-    }
-    //delete old image
-    let oldImage = null,
-      newImage = null;
-    if (req.file) {
-      oldImage = await cloudinary.uploader.destroy(
-        postDoc.cover_id,
-        (error, result) => {
-          if (error) {
-            console.error(error);
-            res.status(500).send("Upload failed");
-          }
-        }
-      );
-      newImage = await cloudinary.uploader.upload(
-        req.file.path,
-        { folder: "covers" },
-        (error, result) => {
-          if (error) {
-            console.error(error);
-            res.status(500).send("Upload failed");
-          }
-        }
-      );
-    }
-    await postDoc.updateOne({
-      title,
-      summary,
-      content,
-      cover: newImage?.secure_url ? newImage.secure_url : postDoc.cover,
-      cover_id: newImage?.public_id ? newImage.secure_url : postDoc.cover_id,
-      author: info.id,
+app.put("/post", upload.single("file"), async (req, res) => {
+  try {
+    const { token } = req.cookies;
+    jwt.verify(token, secret, {}, async (error, info) => {
+      if (error) throw error;
+      let newPath, newId;
+      if (req.file) {
+        const b64 = Buffer.from(req.file.buffer).toString("base64");
+        let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+        const cldRes = await handleUpload(dataURI);
+        newPath = cldRes.secure_url;
+        newId = cldRes.public_id;
+      }
+      const { id, title, summary, content } = req.body;
+      const postDoc = await Post.findById(id);
+      const isAuthor =
+        JSON.stringify(postDoc.author) === JSON.stringify(info.id);
+      if (!isAuthor) {
+        return res.status(400).json("You are not the author.");
+      }
+      if (newId) await handleDelete(postDoc.cover.id);
+      await postDoc.updateOne({
+        title,
+        summary,
+        content,
+        cover: {
+          url: newPath ? newPath : postDoc.cover.url,
+          id: newId ? newId : postDoc.cover.id,
+        },
+        author: info.id,
+      });
+      res.json(postDoc);
     });
-    res.json(postDoc);
-  });
+  } catch (error) {
+    res.send({ message: error.message });
+  }
 });
 
 app.delete("/post/:id", async (req, res) => {
-  // cloudinary image delete
-  const { id } = req.params;
-  const post = await Post.findById(id);
-  console.log(post);
-  if (!post) return res.status(400).json("post does not exist");
-  const image = await cloudinary.uploader.destroy(
-    post.cover_id,
-    (error, result) => {
-      if (error) {
-        console.error(error);
-        res.status(500).send("Upload failed");
-      }
-    }
-  );
-  post.delete();
-  res.status(200).json("post successfully deleted");
+  try {
+    const { id } = req.params;
+    const post = await Post.findById(id);
+    if (!post) res.status(400).json("post does not exist");
+    const oldId = post.cover.id;
+    await post.delete();
+    await handleDelete(oldId);
+    res.status(200).json("post successfully deleted");
+  } catch (error) {
+    res.send({ message: error.message });
+  }
 });
 
-app.listen(4000, console.log("Listening 🚀"));
+app.get("/", (req, res) => {
+  res.send("Server running");
+});
+
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, console.log("Listening 🚀"));
+
+module.exports = app;
