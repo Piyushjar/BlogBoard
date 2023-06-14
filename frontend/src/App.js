@@ -24,8 +24,8 @@ function App() {
             <Route path="/post/:id" element={<PostPage />} />
             <Route path="/edit/:id" element={<EditPost />} />
             {/* whiteboard */}
-            <Route path="/board/:id" element={<Board/>} />
           </Route>
+          <Route path="/board/:id" element={<Board />} />
         </Route>
         <Route
           path="*"

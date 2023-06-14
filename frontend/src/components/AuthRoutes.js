@@ -7,6 +7,7 @@ function AuthRoutes() {
   const { userInfo } = useContext(UserContext);
 
   const username = userInfo?.username;
+  console.log(username);
   if (!username) {
     return <Navigate to="/login" state={{ from: location }} />;
   }

@@ -2,7 +2,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "./modal.css";
 import React, { useRef, useState, useEffect } from "react";
-import { Link, useParams, NavLink } from "react-router-dom";
+import { Link, useParams, NavLink, Navigate } from "react-router-dom";
 import Draggable from "react-draggable";
 
 function Canvas({ _id }) {
@@ -23,8 +23,6 @@ function Canvas({ _id }) {
 
   const onFullScreen = (e) => {
     e.stopPropagation();
-
-    console.log("id " + id);
   };
   useEffect(() => {
     const canvas = canvasRef.current;
